@@ -9,7 +9,6 @@
     "node": ">=4.0.0"
   },
   "scripts": {
-    "postinstall": "curl -s https://raw.githubusercontent.com/reactorcore/pomander/master/bin/install | bash",
     "start": "nodemon --ignore node_modules index.js",
     "start:es6": "nodemon --exec babel-node --ignore node_modules index.js",
     "test": "mocha --bail --reporter nyan test/ServerSpec.js",
@@ -17,10 +16,11 @@
     "lint": "eslint ./"
   },
   "dependencies": {
-    "bcrypt-nodejs": "0.0.3",
+    "bcrypt": "^1.0.3",
     "bluebird": "^3.3.4",
     "body-parser": "^1.15.0",
     "bookshelf": "^0.9.1",
+    "cookie-parser": "^1.4.3",
     "ejs": "^2.4.1",
     "express": "^4.13.4",
     "express-partials": "^0.3.0",
