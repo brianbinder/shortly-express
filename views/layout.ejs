@@ -19,5 +19,18 @@
       <a href="#"> LOGOUT </a>
     </h4> -->
     <%- body %>
+
+    <script>
+    $( document ).ready(function() {
+      $('li a.logout').on('click',function(){
+        $.post('/logout', null, function(res, status) {
+          location.reload();
+          console.log('status sent to $.get: ', status);
+          console.log('response to get: ', res);
+        });
+      })
+    });
+    </script>
+
   </body>
 </html>

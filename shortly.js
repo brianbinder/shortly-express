@@ -28,8 +28,6 @@ app.use(session({
 // This allows you to set req.session.maxAge to let certain sessions
 // have a different value than the default.
 app.use(function (req, res, next) {
-  console.log('req session maxAge *********** = ', req.session.maxAge);
-  console.log('req session-options !!!!!!!!!!!!! = ', req.sessionOptions);
   //req.sessionOptions.maxAge = req.session.maxAge || req.sessionOptions.maxAge
   next();
 });
@@ -47,39 +45,56 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(function(req, res, next) { // in cb :
   //check if not logged in ( session exist )
-  console.log('req.path line 30: ', req.path);
   if ((req.path === '/' || req.path === '/links' || req.path === '/create')
       && !req.session.user) {
-    console.log('req.path line 32: ', req.path);
     res.redirect('/login');
   } else {
     next();
   }
 });
 
+
+
 app.get('/login',
   function(req, res) {
-    console.log('is redirecting in /login');
+    console.log('we passed by render login');
     res.render('login');
   });
 
+
+app.get('/logout', function(req, res) {
+  console.log('touched logout');
+  //res.render('login');
+  req.session.destroy(function() {
+    res.redirect('/login');
+  });
+});
+
+app.post('/logout', function(req, res) {
+  console.log('sent post to logout');
+  //res.render('login');
+  req.session.destroy(function() {
+    res.redirect('/login');
+  });
+});
+
+
 app.get('/signup',
   function(req, res) {
-    console.log('loading the signup page');
     res.render('signup');
   });
 
 app.get('/',
   function(req, res) {
-    console.log(' "/" shortly.js');
     res.render('index');
   });
 
 app.get('/create',
   function(req, res) {
-    console.log(' /create shortly.js');
+    console.log('the view sent me here');
     res.render('index');
   });
+
 
 
 app.get('/links',
@@ -94,7 +109,6 @@ app.post('/links',
     var uri = req.body.url;
 
     if (!util.isValidUrl(uri)) {
-      console.log('Not a valid url: ', uri);
       return res.sendStatus(404);
     }
 
@@ -104,7 +118,6 @@ app.post('/links',
       } else {
         util.getUrlTitle(uri, function(err, title) {
           if (err) {
-            console.log('Error reading URL heading: ', err);
             return res.sendStatus(404);
           }
 
@@ -131,14 +144,10 @@ app.post('/login',
   //Users.findOne
     var username = req.body.username;
     var password = req.body.password;
-    console.log('username: ', username);
-    console.log('password: ', password);
 
     new User({ username: username }).fetch().then(function(found) {
       if (found) {
-        console.log('found: ', found);
         bcrypt.compare(password, found.attributes.password, function(error, result) {
-          console.log('result: ', result);
           if (result) {
             var user = found.attributes;
             req.session.user = user;
@@ -157,9 +166,6 @@ app.post('/login',
 
 app.post('/signup',
   function(req, res) {
-    console.log('req.body: ', req.body);
-    console.log('req.body: ', req.body.username);
-    console.log('req.body: ', req.body.password);
 
     // get user input
     var username = req.body.username;
@@ -175,7 +181,6 @@ app.post('/signup',
       username: username,
       password: password
     })).then(function(user) {
-      console.log('user: ', user);
       req.session.user = user.attributes;
       // if !err
       res.redirect('/');
